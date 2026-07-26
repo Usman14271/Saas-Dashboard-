@@ -1,20 +1,21 @@
 {
-  "name": "saas-dashboard",
-  "version": "1.0.0",
-  "description": "A SAAS dashboard for B2B business",
-  "keywords": [
-    "SAAS",
-    "B2B",
-    "product"
-  ],
-  "license": "ISC",
-  "author": "Muhammad Usman",
-  "type": "module",
-  "main": "index.js",
-  "scripts": {
-    "dev": "nodemon src/index.js"
-  },
-  "devDependencies": {
-    "nodemon": "^3.1.14"
-  }
+    "name": "saas-dashboard",
+    "version": "1.0.0",
+    "description": "A SAAS dashboard for B2B business",
+    "keywords": [
+        "SAAS",
+        "B2B",
+        "product"
+    ],
+    "license": "ISC",
+    "author": "Muhammad Usman",
+    "type": "module",
+    "main": "index.js",
+    "scripts": {
+        "dev": "nodemon src/index.js"
+    },
+    "devDependencies": {
+        "nodemon": "^3.1.14",
+        "prettier": "^3.9.6"
+    }
 }
