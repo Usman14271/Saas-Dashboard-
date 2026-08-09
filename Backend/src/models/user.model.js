@@ -66,23 +66,6 @@ const userSchema = new mongoose.Schema(
             required: true,
             minlength: 8,
         },
-        isEmailVerified:{
-            type: Boolean,
-            default: false,
-            required: true,
-        },
-        addedBy:{
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "User",
-            required: true
-        },
-        isActive:{
-            type: Boolean,
-            default: true,
-        },
-        lastLogin:{
-            type: Date,
-        },
         refreshToken:{
             type: String,
             default: "",
@@ -91,10 +74,9 @@ const userSchema = new mongoose.Schema(
     {timestamps: true}
 );
 
-userSchema.pre('save', async function(next){
-    if(!this.modified("password")) return next();
+userSchema.pre('save', async function(){
+    if(!this.isModified("password")) return;
     this.password = bcrypt.hash(this.password,10);
-    next();
 })
 
 userSchema.methods.isPasswordCorrect = async function (password) {
@@ -104,11 +86,11 @@ userSchema.methods.isPasswordCorrect = async function (password) {
 userSchema.method.accessToken = async function () {
     return await jwt.sign(
         {
-            _id = this._id,
-            bussinessId = this.businessId,
-            username = this.username,
-            role = this.role,
-            addedBy = this.addedBy,
+            _id: this._id,
+            bussinessId: this.businessId,
+            username: this.username,
+            role: this.role,
+            addedBy: this.addedBy,
         },
         process.env.ACCESS_TOKEN_SECRET,
         {
@@ -120,9 +102,9 @@ userSchema.method.accessToken = async function () {
 userSchema.method.refreshToken = async function () {
     return await jwt.sign(
         {
-            _id = this._id,
-            bussinessId = this.businessId,
-            role = this.role,
+            _id: this._id,
+            bussinessId: this.businessId,
+            role: this.role,
         },
         process.env.REFRESH_TOKEN_SECRET,
         {
