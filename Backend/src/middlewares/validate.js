@@ -1,3 +1,5 @@
+import {apiError} from "../uttils/apiError.js";
+
 const validate = (schema) => {
 
     return (req, res, next) => {
@@ -14,6 +16,7 @@ const validate = (schema) => {
         });
 
         if (error) {
+            
             return res.status(400).json({
                 success: false,
                 errors: error.details.map((err) => ({
@@ -24,8 +27,10 @@ const validate = (schema) => {
         }
 
         req.body = value.body || {};
-        req.params = value.params || {};
-        req.query = value.query || {};
+        Object.assign(req.params, value.params || {});
+        Object.assign(req.query, value.query || {});
+        // req.params = value.params || {};
+        // req.query = value.query || {};
 
         next();
     };
