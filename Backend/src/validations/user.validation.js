@@ -76,11 +76,6 @@ export const registerUserValidation = Joi.object({
             .optional()
     }).optional(),
 
-    profilePicture: Joi.string()
-        .uri()
-        .allow("")
-        .optional(),
-
 
     role: Joi.string()
         .trim()
