@@ -76,20 +76,6 @@ export const registerUserValidation = Joi.object({
             .optional()
     }).optional(),
 
-
-    role: Joi.string()
-        .trim()
-        .valid(
-            "owner",
-            "admin",
-            "manager",
-            "sales",
-            "accountant",
-            "inventory",
-            "customer"
-        )
-        .default("admin"),
-
     password: Joi.string()
         .min(8)
         .max(30)
@@ -100,5 +86,30 @@ export const registerUserValidation = Joi.object({
             "string.max": "Password cannot exceed 30 characters",
             "any.required": "Password is required"
         }),
+    })
+});
+
+export const loginUserValidation = Joi.object({
+    body: Joi.object({
+        email: Joi.string()
+            .trim()
+            .lowercase()
+            .email()
+            .required()
+            .messages({
+                "string.empty": "Email is required",
+                "string.email": "Please provide a valid email address",
+                "any.required": "Email is required"
+            }),
+        password: Joi.string()
+            .min(8)
+            .max(30)
+            .required()
+            .messages({
+                "string.empty": "Password is required",
+                "string.min": "Password must be at least 8 characters",
+                "string.max": "Password cannot exceed 30 characters",
+                "any.required": "Password is required"
+            })
     })
 });

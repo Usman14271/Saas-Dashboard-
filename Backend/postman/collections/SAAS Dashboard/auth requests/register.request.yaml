@@ -1,0 +1,40 @@
+$kind: http-request
+name: register
+description: ""
+url: "{{server}}/api/auth/register"
+method: POST
+body:
+  type: formdata
+  content:
+    - type: text
+      key: fullName
+      value: M.Usman
+      description: ""
+      disabled: false
+    - type: text
+      key: username
+      value: usman1
+      description: ""
+      disabled: false
+    - type: text
+      key: email
+      value: usman1@gmail.com
+      description: ""
+      disabled: false
+    - type: text
+      key: password
+      value: secure123
+      description: ""
+      disabled: false
+    - type: text
+      key: phone
+      value: "03239872808"
+      description: ""
+      disabled: false
+    - type: file
+      key: profilePicture
+      src:
+        - /C:/Users/usman/Downloads/ChatGPT Image Aug 7, 2026, 11_10_25 PM.png
+      description: ""
+      disabled: false
+order: 3643044957314953
