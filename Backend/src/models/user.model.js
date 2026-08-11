@@ -7,7 +7,6 @@ const userSchema = new mongoose.Schema(
         businessId:{
             type: mongoose.Schema.Types.ObjectId,
             ref: "Business",
-            required: true
         },
         fullName:{
             type: String,
@@ -48,18 +47,9 @@ const userSchema = new mongoose.Schema(
             required: true,
         },
         role:{
-            type: String,
-            enum: [
-                "owner",
-                "admin",
-                "manager",
-                "sales",
-                "accountant",
-                "inventory",
-                "customer"
-            ],
-            trim: true,
-            default: "admin",
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Role",
+            required: true,
         },
         password:{
             type: String,
@@ -76,7 +66,7 @@ const userSchema = new mongoose.Schema(
 
 userSchema.pre('save', async function(){
     if(!this.isModified("password")) return;
-    this.password = bcrypt.hash(this.password,10);
+    this.password = await bcrypt.hash(this.password,10);
 })
 
 userSchema.methods.isPasswordCorrect = async function (password) {
