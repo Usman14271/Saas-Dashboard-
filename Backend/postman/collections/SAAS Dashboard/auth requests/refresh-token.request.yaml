@@ -1,0 +1,9 @@
+$kind: http-request
+name: refresh-token
+description: ""
+url: "{{server}}/api/auth/refresh-token"
+method: POST
+body:
+  type: json
+  content: ""
+order: 4378059619607190

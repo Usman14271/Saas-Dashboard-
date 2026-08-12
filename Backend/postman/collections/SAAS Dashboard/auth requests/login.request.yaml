@@ -1,0 +1,11 @@
+$kind: http-request
+name: login
+description: ""
+url: "{{server}}/api/auth/login"
+method: POST
+body:
+  type: urlencoded
+  content:
+    email: usman1@gmail.com
+    password: secure123
+order: 3747397565916881

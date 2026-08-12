@@ -1,0 +1,6 @@
+$kind: http-request
+name: logout
+description: ""
+url: "{{server}}/api/auth/logout"
+method: GET
+order: 3851982873840873

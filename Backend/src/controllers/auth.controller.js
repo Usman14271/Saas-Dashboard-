@@ -1,6 +1,7 @@
-import { registerService, loginService } from "../services/auth.service.js";
+import { registerService, loginService,refreshTokenService, logoutService } from "../services/auth.service.js";
 import asyncHandler from "../uttils/asyncHandler.js";
 import { apiResponse } from "../uttils/apiResponse.js";
+
 
 const registerUser = asyncHandler(async (req,res) => {
 
@@ -33,10 +34,8 @@ const loginUser = asyncHandler(async (req,res) => {
 })
 
 const logoutUser = asyncHandler(async (req,res) => { 
-    await user.findByIdAndUpdate(
-        req.user._id, 
-        { refreshToken: "" }
-    );
+
+    await logoutService(req.user._id)
 
     const options = {
         httpOnly: true,
@@ -52,4 +51,32 @@ const logoutUser = asyncHandler(async (req,res) => {
     )   
   })
 
-export {registerUser, loginUser,logoutUser};
+const refreshToken = asyncHandler(async(req,res)=>{
+    const incomingRefreshToken = req?.cookies?.refreshToken || req?.body?.refreshToken;  
+
+    console.log(incomingRefreshToken)
+
+    const {
+        accessToken,
+        refreshToken 
+        } = await refreshTokenService(incomingRefreshToken);
+
+    const options = {
+        httpOnly:true,
+        secure:true
+    }
+
+    return res
+    .status(200)
+    .cookie("accessToken",accessToken,options)
+    .cookie("refreshToken",refreshToken,options)
+    .json(
+        new apiResponse(
+            200,
+            {accessToken,refreshToken},
+            "Token refreshed successfully"
+        )
+    )
+})
+
+export {registerUser, loginUser,logoutUser, refreshToken};

@@ -2,6 +2,7 @@ import fs from "fs/promises";
 import { user } from "../models/user.model.js";
 import uploadCloudinary from "../uttils/cloudinary.js";
 import { apiError } from "../uttils/apiError.js";
+import jwt from "jsonwebtoken";
 
 const registerService = async (body, file) => {
 
@@ -55,14 +56,21 @@ const generateTokens = async(_id)=>{
 
     try{
         const requiredUser = await user.findById(_id);
-        const accessToken =  requiredUser.accessToken();
-        const refreshToken =  requiredUser.refreshToken();
-
+        const accessToken = requiredUser.generateAccessToken();
+        const refreshToken = requiredUser.generateRefreshToken();
+      
         requiredUser.refreshToken = refreshToken;
 
-        await requiredUser.save(validateBeforeSave=false);
 
-        return {accessToken,refreshToken};
+
+        await requiredUser.save({
+           validateBeforeSave: false
+        });
+
+        return {
+           accessToken,
+           refreshToken
+        };
     }
     catch(err){
         throw new apiError(
@@ -82,7 +90,7 @@ const loginService = async (email, password) => {
         )
     }
 
-    const isMatch = await searchedUser.ispassword(password);
+    const isMatch = await searchedUser.isPasswordCorrect(password);
 
     if(!isMatch){
         throw new apiError(
@@ -97,5 +105,34 @@ const loginService = async (email, password) => {
 
 }
 
+const logoutService = async (_id) =>{
+  await user.findByIdAndUpdate(
+        _id, 
+        { refreshToken: "" }
+    );
+}
 
-export {registerService,loginService}
+const refreshTokenService = async(incomingToken) =>{
+    if(!incomingToken){
+      throw new apiError(401, "Unauthorized Access")
+    }
+
+    const decodedToken = jwt.verify(incomingToken,process.env.REFRESH_TOKEN_SECRET);
+
+    const findUser = await user.findById(decodedToken._id);
+
+    if(!findUser){
+      throw new apiError(401, "Unauthorized Access")
+    }
+
+    if(findUser.refreshToken != incomingToken){
+      throw new apiError(401, "Unauthorized Access") 
+    }
+
+    const {accessToken, refreshToken } = await generateTokens(findUser._id);
+
+    return {accessToken,refreshToken};
+}
+
+
+export {registerService,loginService, refreshTokenService, logoutService}
