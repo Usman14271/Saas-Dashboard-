@@ -113,3 +113,28 @@ export const loginUserValidation = Joi.object({
             })
     })
 });
+
+export const changePasswordValidation = Joi.object({
+    body: Joi.object({
+        // currentPassword: Joi.string()
+        //     .trim()
+        //     .lowercase()
+        //     .email()
+        //     .required()
+        //     .messages({
+        //         "string.empty": "Email is required",
+        //         "string.email": "Please provide a valid email address",
+        //         "any.required": "Email is required"
+        //     }),
+        // newPassword: Joi.string()
+        //     .min(8)
+        //     .max(30)
+        //     .required()
+        //     .messages({
+        //         "string.empty": "Password is required",
+        //         "string.min": "Password must be at least 8 characters",
+        //         "string.max": "Password cannot exceed 30 characters",
+        //         "any.required": "Password is required"
+        //     })
+    })
+});

@@ -1,4 +1,4 @@
-import { registerService, loginService,refreshTokenService, logoutService } from "../services/auth.service.js";
+import { registerService, loginService,refreshTokenService, logoutService, currentUserService, changePasswordService } from "../services/auth.service.js";
 import asyncHandler from "../uttils/asyncHandler.js";
 import { apiResponse } from "../uttils/apiResponse.js";
 
@@ -54,8 +54,6 @@ const logoutUser = asyncHandler(async (req,res) => {
 const refreshToken = asyncHandler(async(req,res)=>{
     const incomingRefreshToken = req?.cookies?.refreshToken || req?.body?.refreshToken;  
 
-    console.log(incomingRefreshToken)
-
     const {
         accessToken,
         refreshToken 
@@ -79,4 +77,41 @@ const refreshToken = asyncHandler(async(req,res)=>{
     )
 })
 
-export {registerUser, loginUser,logoutUser, refreshToken};
+const getCurrentUser = asyncHandler(async(req,res)=>{
+    const userData = await currentUserService(req.user._id);
+
+    return res
+    .status(200)
+    .json(
+        new apiResponse(200,userData,"")
+    )
+
+})
+
+const changePassword = asyncHandler(async (req, res) => {
+    
+    const { accessToken, refreshToken } = await changePasswordService(
+        req.user._id,
+        req.body.newPassword,
+        req.body.currentPassword
+    );
+
+    const options = {
+        httpOnly: true,
+        secure: true
+    }
+
+    return res
+        .status(200)
+        .cookie("refreshToken", refreshToken, options)
+        .cookie("accessToken", accessToken, options)
+        .json(
+            new apiResponse(
+                200,
+                { accessToken, refreshToken },
+                "Password Changed successfully"
+            )
+        );
+});
+
+export {registerUser, loginUser,logoutUser, refreshToken,getCurrentUser, changePassword};

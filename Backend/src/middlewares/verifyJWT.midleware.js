@@ -4,7 +4,7 @@ import { apiError } from "../uttils/apiError.js";
 import asyncHandler from "../uttils/asyncHandler.js";
 
 const verifyJWT = asyncHandler(async (req, res, next) => {
-    // try {
+    try {
         const token = req?.cookies?.accessToken || req.header("authorization")?.replace("Bearer ","");
 
         if(!token){
@@ -22,9 +22,22 @@ const verifyJWT = asyncHandler(async (req, res, next) => {
         req.user = authUser;
     
         next();
-    // } catch (error) {
-    //     throw new apiError(401,"Unauthorized access",error);
-    //}
+    } 
+    catch (error) {
+        if (error.name === "TokenExpiredError") {
+      throw new apiError(
+        401,
+        "Access token expired"
+      );
+    }
+
+    if (error.name === "JsonWebTokenError") {
+      throw new apiError(
+        401,
+        "Invalid access token"
+      );
+    }
+    }
 })
 
 export default verifyJWT;

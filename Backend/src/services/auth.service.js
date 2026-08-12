@@ -134,5 +134,38 @@ const refreshTokenService = async(incomingToken) =>{
     return {accessToken,refreshToken};
 }
 
+const currentUserService = async (_id)=>{
+  const data = await user.findById(_id).select("-password -refreshToken")
 
-export {registerService,loginService, refreshTokenService, logoutService}
+  if(!data){
+    throw new apiError(400, "User data cannot exist");
+  }
+
+  return data;
+}
+
+const changePasswordService = async(_id,newPassword,currentPassword)=>{
+
+  const currentUser = await user.findById(_id);
+
+  const passwordCorrect = await currentUser.isPasswordCorrect(currentPassword);
+
+  if(!passwordCorrect){
+    throw new apiError(402,"Password cannot match from previous password")
+  }
+
+  const passwordSame = await currentUser.isPasswordSame(newPassword);
+
+  if(passwordSame){
+    throw new apiError(402,"Password must be different from previous password")
+  }
+
+  currentUser.password = newPassword;
+  currentUser.save();
+  
+  const {accessToken,refreshToken} = await generateTokens(_id)  
+  return {accessToken,refreshToken};
+
+}
+
+export {registerService,loginService, refreshTokenService, logoutService, currentUserService, changePasswordService}
